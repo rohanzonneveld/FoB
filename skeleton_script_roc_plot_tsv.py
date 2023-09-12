@@ -87,6 +87,8 @@ def integrate(fpr, tpr):
         ### START CODING HERE ###
         #########################
         # Just copy and paste the code lines which you have completed in skeleton_script_create_roc_plot.py
+        auc += (cur_fpr - last_fpr) * (cur_tpr + last_tpr) / 2
+
 
         #########################
         ###  END CODING HERE  ###

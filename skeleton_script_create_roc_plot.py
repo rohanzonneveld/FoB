@@ -168,10 +168,10 @@ def calculate_coordinates(predictor_score_dict, benchmark_dict, out_filepath):
     # Use the following if-statement and replace the question mark with the type of the predictor.
     # It will put the ROC curve at the correct side of the diagonal line.
 
-    # if type_predictor == ? :
-    #     sorted_score_hgvs_pairs = sorted(score_hgvs_pairs)
-    # else:
-    #     sorted_score_hgvs_pairs = sorted(score_hgvs_pairs, reverse=True)
+    if type_predictor == 'sift' :
+        sorted_score_hgvs_pairs = sorted(score_hgvs_pairs)
+    else:
+        sorted_score_hgvs_pairs = sorted(score_hgvs_pairs, reverse=True)
 
     #########################
     ###  END CODING HERE  ###
@@ -216,15 +216,24 @@ def calculate_coordinates(predictor_score_dict, benchmark_dict, out_filepath):
         # Determine whether the SNP is classified by the benchmark as:
         #    Pathogenic -> actual negative, thus a false positive (x-coordinate)
         #    Benign  -> actual positive, thus a true positive (y-coordinate)
+        classification = benchmark_dict[hgvs]
 
         # Increase the respective value of num_benign or num_pathogenic
-
+        if classification == 'Pathogenic':
+            num_pathogenic += 1
+        elif classification == 'Benign':
+            num_benign += 1
+        
         # Now, you need to calculate TPR and FPR for unique scores as TP/P and FP/N, respectively,
         # using num_benign, num_pathogenic, total_benign, and total_pathogenic correctly. Append the values
         # to the corresponding lists: tpr is a list of y-coordinates and fpr is a list of x-coordinates.
         # Calculate the rates if HGVS score index i is the index of the score before a breakpoint
         # (use index_prebreakpoint_score). Also, append the score to coordinate_score.
+        if i in index_prebreakpoint_score:
+            tpr.append(num_pathogenic / total_pathogenic)
+            fpr.append(num_benign / total_benign)   
 
+        coordinate_score.append(score)
 
         #########################
         ###  END CODING HERE  ###
@@ -255,6 +264,7 @@ def integrate(fpr, tpr):
         ### START CODING HERE ###
         #########################
         # Calculate AUC
+        auc += (cur_fpr - last_fpr) * (cur_tpr + last_tpr) / 2
 
         #########################
         ###  END CODING HERE  ###

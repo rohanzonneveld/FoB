@@ -1,0 +1,1 @@
+data/vep/HGVS_2014_VEP_baseline.tsv data/BLOSUM62.txt -o data/vep/HGVS_2014_baseline_scores.tsv 
