@@ -264,6 +264,7 @@ def integrate(fpr, tpr):
         #########################
         # Calculate AUC
         auc += (cur_fpr - last_fpr) * (cur_tpr + last_tpr) / 2
+        # auc += (cur_fpr - last_fpr) * (last_tpr + (cur_tpr - last_tpr) / 2)
 
         #########################
         ###  END CODING HERE  ###
@@ -295,9 +296,21 @@ def roc_plot(tpr, fpr, coordinator_score, out_filepath, color = False):
         color_bar = figure.colorbar(lc)
         colorbar_legend = type_predictor + ' score'
         color_bar.ax.set_ylabel(colorbar_legend)
+        if type_predictor == 'polyphen':
+            # find first index of coordinate_score where score is lower than 0.85
+            index = next(x for x, val in enumerate(coordinator_score) if val < 0.85)
+        elif type_predictor == 'sift':
+            # find first index of coordinate_score where score is higher than 0.05
+            index = next(x for x, val in enumerate(coordinator_score) if val > 0.05)
+        if type_predictor != 'BLOSUM':
+            # place an arrow to indicate the threshold score
+            axes.annotate('Default threshold', xy=(fpr[index], tpr[index]), xytext=(fpr[index] - 0.2, tpr[index] + 0.1),
+                          arrowprops=dict(facecolor='black', shrink=0.05))
+            
+            
     else:
         axes.plot(fpr, tpr)
-
+    
     axes.plot((0, 1), (0, 1), '--', color='navy', lw=lw, linestyle='--', label='Random')
     axes.set_xlim([-0.008, 1.008])
     axes.set_ylim([-0.008, 1.008])
