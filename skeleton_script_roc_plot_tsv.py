@@ -156,7 +156,9 @@ def main():
         list_tpr = []
         for coordinate_list in tsv_files:
             fpr, tpr = parse_tsv_file(coordinate_list)
-            labels.append(type_vep)
+            # from coordinalte_list, get the dataset name
+            dataset = coordinate_list.split('/')[-1].split('_')[1][:-4]
+            labels.append(dataset)
             list_fpr.append(fpr)
             list_tpr.append(tpr)
         roc_plot_together(list_fpr, list_tpr, labels, out_filepath, title)
